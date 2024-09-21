@@ -1,8 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mini_app/ui/detail_product_screen.dart';
+import 'package:mini_app/ui/list_product_screen.dart';
+import 'package:mini_app/ui/login_screen.dart';
+import 'package:mini_app/utils/firebase/login/authentication.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> configureApp() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.android,
+  );
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await configureApp();
   runApp(const MyApp());
 }
 
@@ -33,7 +47,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: DetailProductScreen(),
+      home: ListProductScreen(),
     );
   }
 }
