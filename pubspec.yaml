@@ -41,6 +41,8 @@ dependencies:
   html: ^0.15.4
   firebase_auth: 4.16.0
   firebase_core: any
+  dio: ^5.7.0
+  pretty_dio_logger: ^1.4.0
 
 
 dev_dependencies:
