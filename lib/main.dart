@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mini_app/ui/detail_product_screen.dart';
 import 'package:mini_app/ui/list_product_screen.dart';
 import 'package:mini_app/ui/login_screen.dart';
+import 'package:mini_app/ui/things_bought_screen.dart';
 import 'package:mini_app/utils/firebase/login/authentication.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -47,7 +50,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ListProductScreen(),
+      home: LoaderOverlay(
+        child: const ThingsBoughtScreen(),
+        overlayWidgetBuilder: (_) {
+          //ignored progress for the moment
+          return const Center(
+            child: SpinKitCubeGrid(
+              color: Colors.red,
+              size: 50.0,
+            ),
+          );
+        },
+      ),
     );
   }
 }
