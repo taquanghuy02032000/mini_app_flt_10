@@ -9,6 +9,8 @@ class ThingsBoughtController extends GetxController {
   List<ThingBoughtModel> thingsBought = <ThingBoughtModel>[].obs;
 
   RxBool isLoading = false.obs;
+  RxString errorToast = ''.obs;
+  RxString successToast = ''.obs;
 
   Future<void> addBoughtThing({
     required String nameThing,
@@ -27,8 +29,69 @@ class ThingsBoughtController extends GetxController {
   Future<void> getThingsBought() async {
     isLoading.value = true;
     List<ThingBoughtModel> result = await firebaseStorage.getThingsBoughtFromDB();
+    thingsBought.clear();
     thingsBought.addAll(result);
     isLoading.value = false;
+  }
+
+  Future<void> deleteThingBought({required String id}) async {
+    isLoading.value = true;
+    bool result = await firebaseStorage.deleteThingBought(id: id);
+    isLoading.value = false;
+    if (!result) {
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Error',
+          message: 'error when delete',
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else {
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Success',
+          message: 'delete success',
+          duration: Duration(seconds: 1),
+        ),
+      );
+
+      // successToast.value = 'delete success';
+    }
+    await getThingsBought();
+  }
+
+  Future<void> updateThingBought({
+    required String id,
+    required String title,
+    required String cost,
+  }) async {
+    isLoading.value = true;
+    bool result = await firebaseStorage.editThingBought(
+      id: id,
+      title: title,
+      cost: cost,
+    );
+    isLoading.value = false;
+    if (!result) {
+      // errorToast.value = 'error when update';
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Error',
+          message: 'error when update',
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else {
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Success',
+          message: 'update success',
+          duration: Duration(seconds: 1),
+        ),
+      );
+      // successToast.value = 'update success';
+    }
+    await getThingsBought();
   }
 
   @override

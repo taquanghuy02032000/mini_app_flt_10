@@ -55,6 +55,43 @@ class FireBaseStorageUtil {
     print(result.length);
     return result;
   }
+
+  Future<bool> deleteThingBought({
+    required String id,
+  }) async {
+    bool result = false;
+    try {
+      await storage.collection('ThingsBought').doc(id).delete();
+      result = true;
+    } on FirebaseException catch (errorFirebase) {
+      print('error when delete $errorFirebase');
+    } catch (_) {
+      print('error when delete $_');
+    }
+    return result;
+  }
+
+  Future<bool> editThingBought({
+    required String id,
+    required String title,
+    required String cost,
+  }) async {
+    bool result = false;
+    final ThingBoughtModel modelEdit = ThingBoughtModel(
+      id,
+      cost,
+      title,
+    );
+    try {
+      await storage.collection('ThingsBought').doc(id).update(modelEdit.toMap());
+      result = true;
+    } on FirebaseException catch (errorFirebase) {
+      print('error when update $errorFirebase');
+    } catch (_) {
+      print('error when update $_');
+    }
+    return result;
+  }
 }
 
 /// BTVN:

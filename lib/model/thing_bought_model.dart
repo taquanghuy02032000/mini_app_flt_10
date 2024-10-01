@@ -17,6 +17,7 @@ class ThingBoughtModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'cost': cost,
       'thingName': title,
     };

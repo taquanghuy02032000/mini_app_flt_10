@@ -14,6 +14,8 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
   late ThingsBoughtController _controller;
   late TextEditingController _costController;
   late TextEditingController _nameThingController;
+  late TextEditingController _costControllerEdit;
+  late TextEditingController _nameThingControllerEdit;
 
   @override
   void initState() {
@@ -21,6 +23,8 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
     _controller = Get.put(ThingsBoughtController());
     _costController = TextEditingController();
     _nameThingController = TextEditingController();
+    _costControllerEdit = TextEditingController();
+    _nameThingControllerEdit = TextEditingController();
   }
 
   void openDialog() {
@@ -63,23 +67,78 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
         String cost = result[0];
         String nameThing = result[1];
 
-        // context.loaderOverlay.show();
-
         await _controller.addBoughtThing(
           nameThing: nameThing,
           money: cost,
         );
-        // context.loaderOverlay.hide();
+        await _controller.getThingsBought();
+      }
+    });
+  }
+
+  void openEditThing({
+    required String id,
+    required String cost,
+    required String title,
+  }) {
+    _costControllerEdit.text = cost;
+    _nameThingControllerEdit.text = title;
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Edit Thing Bought'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _costControllerEdit,
+              decoration: const InputDecoration(hintText: 'Cost edit'),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              controller: _nameThingControllerEdit,
+              decoration: const InputDecoration(hintText: 'Title edit'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text("Confirm Edit"),
+            onPressed: () => Get.back(
+              result: [
+                _costControllerEdit.text,
+                _nameThingControllerEdit.text,
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).then((result) async {
+      if (result != null) {
+        // Xử lý kết quả ở đây
+        String cost = result[0];
+        String nameThing = result[1];
+
+        await _controller.updateThingBought(
+          id: id,
+          title: nameThing,
+          cost: cost,
+        );
+        await _controller.getThingsBought();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    ever(
-      _controller.isLoading,
-      (callback) => {
-        if (callback) {context.loaderOverlay.show()} else {context.loaderOverlay.hide()}
+    everAll(
+      [_controller.isLoading, _controller.successToast, _controller.errorToast],
+      (_) => {
+        if (_controller.isLoading.value)
+          {context.loaderOverlay.show()}
+        else
+          {context.loaderOverlay.hide()},
       },
     );
 
@@ -101,6 +160,7 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
             itemBuilder: (context, index) {
               final thing = _controller.thingsBought[index];
               return boughtItem(
+                id: thing.id ?? '',
                 name: thing.title ?? '',
                 cost: thing.cost ?? '',
               );
@@ -112,34 +172,51 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
   }
 
   Widget boughtItem({
+    required String id,
     required String name,
     required String cost,
   }) {
-    return InkWell(
-      onTap: () async {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/images/money.png',
-              height: 50,
-              width: 50,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 16,
+      ),
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/images/money.png',
+            height: 50,
+            width: 50,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            children: [
+              Text(name),
+              Text(cost),
+            ],
+          ),
+          const Spacer(),
+          InkWell(
+            child: const Icon(Icons.edit),
+            onTap: () {
+              openEditThing(
+                id: id,
+                cost: cost,
+                title: name,
+              );
+            },
+          ),
+          InkWell(
+            onTap: () {
+              _controller.deleteThingBought(id: id);
+            },
+            child: const Icon(
+              Icons.clear,
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            Column(
-              children: [
-                Text(name),
-                Text(cost),
-              ],
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
