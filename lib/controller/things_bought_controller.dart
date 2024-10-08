@@ -1,7 +1,7 @@
-import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:ui';
+
 import 'package:get/get.dart';
 import 'package:mini_app/model/thing_bought_model.dart';
-import 'package:mini_app/utils/firebase/login/authentication.dart';
 import 'package:mini_app/utils/firebase/storage/firebase_storage.dart';
 
 class ThingsBoughtController extends GetxController {
@@ -11,6 +11,16 @@ class ThingsBoughtController extends GetxController {
   RxBool isLoading = false.obs;
   RxString errorToast = ''.obs;
   RxString successToast = ''.obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+  }
+
+  @override
+  void onReady() async {
+    await getThingsBought();
+  }
 
   Future<void> addBoughtThing({
     required String nameThing,
@@ -94,13 +104,17 @@ class ThingsBoughtController extends GetxController {
     await getThingsBought();
   }
 
-  @override
-  void onInit() async {
-    super.onInit();
-  }
+  ///For language
+  final List<Map<String, dynamic>> localizations = [
+    {
+      'name': 'EngLish',
+      'local': const Locale('en', 'US'),
+    },
+    {
+      'name': 'VietNam',
+      'local': const Locale('vi', 'VI'),
+    }
+  ];
 
-  @override
-  void onReady() async {
-    await getThingsBought();
-  }
+  ///End language
 }

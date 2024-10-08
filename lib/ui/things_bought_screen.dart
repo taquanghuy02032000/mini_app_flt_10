@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:mini_app/config/theme/app_theme.dart';
 import 'package:mini_app/controller/things_bought_controller.dart';
 
 class ThingsBoughtScreen extends StatefulWidget {
@@ -25,6 +26,37 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
     _nameThingController = TextEditingController();
     _costControllerEdit = TextEditingController();
     _nameThingControllerEdit = TextEditingController();
+  }
+
+  void changeLanguageApp() {
+    Get.dialog(AlertDialog(
+      title: Text(
+        'selectLanguage'.tr,
+        style: Theme.of(context).textTheme.displayLarge,
+      ),
+      content: Container(
+        width: double.maxFinite,
+        child: ListView.separated(
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            final currentLanguageValue = _controller.localizations[index]['name'];
+            final currentLocaleValue = _controller.localizations[index]['local'];
+            return InkWell(
+              child: Text(currentLanguageValue),
+              onTap: () {
+                Get.back();
+                Get.updateLocale(currentLocaleValue);
+                // Get.updateLocale(Locale('vi', 'VI'));
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider();
+          },
+          itemCount: _controller.localizations.length,
+        ),
+      ),
+    ));
   }
 
   void openDialog() {
@@ -150,8 +182,29 @@ class _ThingsBoughtScreenState extends State<ThingsBoughtScreen> {
         child: const Text('Add thing bought'),
       ),
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
-        title: const Text('Things Bought'),
+        title: Text('hello'.tr),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: InkWell(
+              child: Icon(Icons.language, size: 30),
+              onTap: () {
+                changeLanguageApp();
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: InkWell(
+              child: Icon(Icons.color_lens_rounded, size: 30),
+              onTap: () {
+                Get.changeTheme(
+                  Get.isDarkMode ? ThemesApp.light : ThemesApp.dark,
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Obx(() {
