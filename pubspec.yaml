@@ -49,6 +49,8 @@ dependencies:
   loader_overlay: 3.0.2
   flutter_spinkit: any
   shared_preferences: ^2.2.3
+  retrofit: ^4.4.1
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
